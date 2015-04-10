@@ -87,6 +87,11 @@ angular.module('ivh.treeview').provider('ivhTreeviewOptions', function() {
     twistieLeafTpl: 'o',
 
     /**
+     * Click on label expands tree
+     */
+    expandOnLabelClick: true,
+
+    /**
      * Template for tree nodes
      */
     nodeTpl: [
