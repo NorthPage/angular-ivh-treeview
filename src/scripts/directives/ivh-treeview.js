@@ -32,6 +32,8 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
       changeHandler: '=ivhTreeviewChangeHandler',
       defaultSelectedState: '=ivhTreeviewDefaultSelectedState',
       expandToDepth: '=ivhTreeviewExpandToDepth',
+      expandOnLabelClick: '=ivhTreeviewExpandOnLabelClick',
+      triggerClickOnTwistie: '=ivhTreeviewTriggerClickOnTwistie',
       idAttribute: '=ivhTreeviewIdAttribute',
       indeterminateAttribute: '=ivhTreeviewIndeterminateAttribute',
       expandedAttribute: '=ivhTreeviewExpandedAttribute',
@@ -64,6 +66,8 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
         'childrenAttribute',
         'defaultSelectedState',
         'expandToDepth',
+        'expandOnLabelClick',
+        'triggerClickOnTwistie',
         'idAttribute',
         'indeterminateAttribute',
         'expandedAttribute',
@@ -200,6 +204,16 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
        */
       trvw.useCheckboxes = function() {
         return localOpts.useCheckboxes;
+      };
+
+      /**
+       * Returns `true` if clicking on a twistie should trigger a node click,
+       * false otherwise
+       *
+       * @return {Boolean} Whether or not to trigger node click on twistie click
+       */
+      trvw.triggerClickOnTwistie = function() {
+        return localOpts.triggerClickOnTwistie;
       };
 
       /**

@@ -108,6 +108,35 @@ angular.module('ivh.treeview').directive('ivhTreeviewChildren', function() {
 
 
 /**
+ * Click logic for treeview nodes
+ *
+ * Handles node click on element click
+ *
+ * @private
+ * @package ivh.treeview
+ */
+
+angular.module('ivh.treeview').directive('ivhTreeviewClick', [function() {
+  'use strict';
+  return {
+    restrict: 'A',
+    require: '^ivhTreeview',
+    link: function(scope, element, attrs, trvw) {
+      var node = scope.node;
+
+      element.addClass('ivh-treeview-click');
+
+      element.bind('click', function() {
+        scope.$apply(function() {
+          trvw.onNodeClick(node);
+        });
+      });
+    }
+  };
+}]);
+
+
+/**
  * Treeview tree node directive
  *
  * @private
@@ -181,8 +210,9 @@ angular.module('ivh.treeview').directive('ivhTreeviewToggle', [function() {
 
       element.bind('click', function() {
         scope.$apply(function() {
-          trvw.onNodeClick(node);
-          trvw.toggleExpanded(node);
+          if(trvw.opts().expandOnLabelClick || (!trvw.opts().expandOnLabelClick && !element.hasClass('ivh-treeview-node-label'))) {
+            trvw.toggleExpanded(node);
+          }
         });
       });
     }
@@ -296,6 +326,8 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
       changeHandler: '=ivhTreeviewChangeHandler',
       defaultSelectedState: '=ivhTreeviewDefaultSelectedState',
       expandToDepth: '=ivhTreeviewExpandToDepth',
+      expandOnLabelClick: '=ivhTreeviewExpandOnLabelClick',
+      triggerClickOnTwistie: '=ivhTreeviewTriggerClickOnTwistie',
       idAttribute: '=ivhTreeviewIdAttribute',
       indeterminateAttribute: '=ivhTreeviewIndeterminateAttribute',
       expandedAttribute: '=ivhTreeviewExpandedAttribute',
@@ -328,6 +360,8 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
         'childrenAttribute',
         'defaultSelectedState',
         'expandToDepth',
+        'expandOnLabelClick',
+        'triggerClickOnTwistie',
         'idAttribute',
         'indeterminateAttribute',
         'expandedAttribute',
@@ -464,6 +498,16 @@ angular.module('ivh.treeview').directive('ivhTreeview', ['ivhTreeviewMgr', funct
        */
       trvw.useCheckboxes = function() {
         return localOpts.useCheckboxes;
+      };
+
+      /**
+       * Returns `true` if clicking on a twistie should trigger a node click,
+       * false otherwise
+       *
+       * @return {Boolean} Whether or not to trigger node click on twistie click
+       */
+      trvw.triggerClickOnTwistie = function() {
+        return localOpts.triggerClickOnTwistie;
       };
 
       /**
@@ -1281,17 +1325,29 @@ angular.module('ivh.treeview').provider('ivhTreeviewOptions', function() {
     twistieLeafTpl: 'o',
 
     /**
+     * Click on label expands tree
+     */
+    expandOnLabelClick: true,
+
+    /**
+     * Click on twistie triggers click handler
+     */
+    triggerClickOnTwistie: true,
+
+    /**
      * Template for tree nodes
      */
     nodeTpl: [
       '<div title="{{trvw.label(node)}}">',
-        '<span ivh-treeview-toggle>',
+        '<span ng-if="trvw.triggerClickOnTwistie()" ivh-treeview-click ivh-treeview-toggle>',
           '<span ivh-treeview-twistie></span>',
         '</span>',
-        '<span ng-if="trvw.useCheckboxes()"',
-            'ivh-treeview-checkbox>',
+        '<span ng-if="!trvw.triggerClickOnTwistie()" ivh-treeview-toggle>',
+          '<span ivh-treeview-twistie></span>',
         '</span>',
-        '<span class="ivh-treeview-node-label" ivh-treeview-toggle>',
+        '<span ng-if="trvw.useCheckboxes()" ivh-treeview-checkbox>',
+        '</span>',
+        '<span class="ivh-treeview-node-label" ivh-treeview-toggle ivh-treeview-click>',
           '{{trvw.label(node)}}',
         '</span>',
         '<div ivh-treeview-children></div>',
