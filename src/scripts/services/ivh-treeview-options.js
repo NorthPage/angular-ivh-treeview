@@ -92,17 +92,24 @@ angular.module('ivh.treeview').provider('ivhTreeviewOptions', function() {
     expandOnLabelClick: true,
 
     /**
+     * Click on twistie triggers click handler
+     */
+    triggerClickOnTwistie: true,
+
+    /**
      * Template for tree nodes
      */
     nodeTpl: [
       '<div title="{{trvw.label(node)}}">',
-        '<span ivh-treeview-toggle>',
+        '<span ng-if="trvw.triggerClickOnTwistie()" ivh-treeview-click ivh-treeview-toggle>',
           '<span ivh-treeview-twistie></span>',
         '</span>',
-        '<span ng-if="trvw.useCheckboxes()"',
-            'ivh-treeview-checkbox>',
+        '<span ng-if="!trvw.triggerClickOnTwistie()" ivh-treeview-toggle>',
+          '<span ivh-treeview-twistie></span>',
         '</span>',
-        '<span class="ivh-treeview-node-label" ivh-treeview-toggle>',
+        '<span ng-if="trvw.useCheckboxes()" ivh-treeview-checkbox>',
+        '</span>',
+        '<span class="ivh-treeview-node-label" ivh-treeview-toggle ivh-treeview-click>',
           '{{trvw.label(node)}}',
         '</span>',
         '<div ivh-treeview-children></div>',
